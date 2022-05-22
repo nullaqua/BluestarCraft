@@ -1,0 +1,17 @@
+name: BluestarCraft
+version: '${project.version}'
+main: me.lanzhi.bluestarcraft.BluestarCraftPlugin
+api-version: 1.17
+commands:
+  bluestarcraft:
+    permission: BluestarCraft.register
+    aliases:
+      - bscraft
+permissions:
+  BluestarCraft.*:
+    children:
+      BluestarCraft.register:
+        default: op
+depend:
+  - NBTAPI
+  - BluestarAPI
