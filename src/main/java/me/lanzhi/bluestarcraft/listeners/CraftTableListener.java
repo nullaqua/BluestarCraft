@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,14 @@ public final class CraftTableListener implements Listener
         {
             event.setCancelled(true);
             plugin.getBluestarCraftManager().openCraftGui((Player) event.getPlayer());
+        }
+    }
+    @EventHandler(priority=EventPriority.HIGH)
+    public void onPlayerPlaceBlock(BlockPlaceEvent event)
+    {
+        if (plugin.getBluestarCraftManager().isBluestarCraftTable(event.getItemInHand()))
+        {
+            event.setCancelled(true);
         }
     }
 }

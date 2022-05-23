@@ -4,13 +4,13 @@ main: me.lanzhi.bluestarcraft.BluestarCraftPlugin
 api-version: 1.17
 commands:
   bluestarcraft:
-    permission: BluestarCraft.register
+    permission: BluestarCraft.command
     aliases:
       - bscraft
 permissions:
   BluestarCraft.*:
     children:
-      BluestarCraft.register:
+      BluestarCraft.command:
         default: op
 depend:
   - NBTAPI

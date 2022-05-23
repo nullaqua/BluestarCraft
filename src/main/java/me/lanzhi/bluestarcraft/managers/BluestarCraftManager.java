@@ -185,7 +185,7 @@ public final class BluestarCraftManager
     @NotNull
     private Inventory getCraftGui(Player player)
     {
-        Inventory inventory=Bukkit.createInventory(player,5*9,"高级工作台");
+        Inventory inventory=Bukkit.createInventory(player,5*9,""+plugin.getLang().getString("craft_gui_titel"));
         for (int i: plugin.getBluestarCraftManager().empty)
         {
             inventory.setItem(i,plugin.getBluestarCraftManager().Empty);
@@ -204,7 +204,7 @@ public final class BluestarCraftManager
     @NotNull
     private Inventory getRegisterGui(@NotNull Player player,@NotNull RecipeData data)
     {
-        Inventory inventory=Bukkit.createInventory(player,5*9,"高级工作台");
+        Inventory inventory=Bukkit.createInventory(player,5*9,""+plugin.getLang().getString("register_gui_titel"));
         for (int i: plugin.getBluestarCraftManager().empty)
         {
             inventory.setItem(i,plugin.getBluestarCraftManager().Empty);

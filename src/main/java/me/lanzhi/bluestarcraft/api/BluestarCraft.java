@@ -2,7 +2,6 @@ package me.lanzhi.bluestarcraft.api;
 
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
 import me.lanzhi.bluestarcraft.api.recipe.Recipe;
-import me.lanzhi.bluestarcraft.managers.BluestarCraftManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,12 +53,6 @@ public final class BluestarCraft
     {
         plugin.getBluestarCraftManager().openCraftGui(player);
     }
-
-    public static void openRegisterGui(@NotNull Player player,@NotNull BluestarCraftManager.RecipeData data)
-    {
-        plugin.getBluestarCraftManager().openRegisterGui(player,data);
-    }
-
 
     public static void setPlugin(BluestarCraftPlugin plugin)
     {

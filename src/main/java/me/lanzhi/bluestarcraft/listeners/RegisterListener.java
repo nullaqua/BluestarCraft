@@ -46,7 +46,7 @@ public class RegisterListener implements Listener
             event.setCancelled(true);
             manager.register(event.getInventory());
             event.getWhoClicked().closeInventory();
-            event.getWhoClicked().sendMessage("注册成功");
+            event.getWhoClicked().sendMessage(""+plugin.getLang().getString("successfully_registered"));
         }
     }
 

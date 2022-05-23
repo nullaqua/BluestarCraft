@@ -31,7 +31,7 @@ public class craftCommand implements CommandExecutor, TabExecutor
     {
         if (!(sender instanceof Player)&&Arrays.asList("open","register").contains(args[0]))
         {
-            sender.sendMessage("仅允许玩家输入");
+            sender.sendMessage(ChatColor.RED+plugin.getLang().getString("only_players_enter"));
             return true;
         }
         switch (args[0])
@@ -41,7 +41,7 @@ public class craftCommand implements CommandExecutor, TabExecutor
             case "register" -> {
                 if (args.length<3)
                 {
-                    sender.sendMessage("格式错误");
+                    sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
                     return true;
                 }
                 String name=args[1];
@@ -53,9 +53,9 @@ public class craftCommand implements CommandExecutor, TabExecutor
             case "delete" ->
                     {
                         manager.removeRecipe(args[1]);
-                        sender.sendMessage(ChatColor.GREEN+"已删除");
+                        sender.sendMessage(ChatColor.GREEN+plugin.getLang().getString("successfully_deleted"));
                     }
-            default -> sender.sendMessage("格式错误");
+            default -> sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
         }
         return true;
     }
