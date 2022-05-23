@@ -1,6 +1,8 @@
 package me.lanzhi.bluestarcraft.listeners;
 
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
+import me.lanzhi.bluestarcraft.api.BluestarCraft;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +29,7 @@ public final class CraftTableListener implements Listener
             return;
         }
         ItemStack itemStack=event.getPlayer().getInventory().getItemInMainHand();
-        if (itemStack.getType().isAir())
+        if (plugin.isAir(itemStack))
         {
             itemStack=event.getPlayer().getInventory().getItemInOffHand();
         }

@@ -36,6 +36,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
     private YamlFile recipes;
     private YamlFile data;
     private YamlFile lang;
+    private double version;
 
     @Override
     public void onEnable()
@@ -59,16 +60,20 @@ public final class BluestarCraftPlugin extends JavaPlugin
         this.saveResource("lang/en.yml",false);
         this.saveResource("lang/zh_cn.yml",false);
 
+        version=18;//Double.parseDouble(Bukkit.getBukkitVersion().substring(2));
+
         recipes=YamlFile.loadYamlFile(new File(getDataFolder(),"recipe.yml"));
         data=YamlFile.loadYamlFile(new File(getDataFolder(),"data.yml"));
         lang=YamlFile.loadYamlFile(new File(getDataFolder(),"lang/"+YamlFile.loadYamlFile(
                 new File(getDataFolder(),"config.yml")).getString("lang")+".yml"));
 
-        NBTItem nbtItem=new NBTItem(new ItemStack(Material.CRAFTING_TABLE));
+        NBTItem nbtItem;
+        nbtItem=new NBTItem(new ItemStack(Material.CRAFTING_TABLE));
         nbtItem.setBoolean("BluestarCraft.Table",true);
         ItemMeta meta=nbtItem.getItem().getItemMeta();
         meta.setDisplayName(ChatColor.GOLD+lang.getString("crafting_table"));
         nbtItem.getItem().setItemMeta(meta);
+        Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
         ShapedRecipe recipe=new ShapedRecipe(new NamespacedKey(this,"crafttable"),nbtItem.getItem());
         recipe.shape(" a ","aba"," a ");
         recipe.setIngredient('a',Material.DIAMOND);
@@ -111,7 +116,10 @@ public final class BluestarCraftPlugin extends JavaPlugin
                 entity.closeInventory();
             }
         }
-        Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
+        if (version>=15)
+        {
+            Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
+        }
         List<Recipe> recipes=new ArrayList<>();
         for (Recipe recipe: bluestarCraftManager.getRecipes())
         {
@@ -140,9 +148,8 @@ public final class BluestarCraftPlugin extends JavaPlugin
             {
                 me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe recipe=new me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe(
                         key,new ItemStack(Material.matchMaterial(shaped.getString(key+".result")),
-                                          shaped.getInt(key+".amount")),
-                        shaped.getStringList(key+".shape").toArray(new String[0])
-                );
+                                          shaped.getInt(key+".amount")
+                ),shaped.getStringList(key+".shape").toArray(new String[0]));
                 for (String s: shaped.getConfigurationSection(key+".ingredient").getKeys(false))
                 {
                     recipe.setIngredient(s.charAt(0),Material.matchMaterial(shaped.getString(key+".ingredient."+s)));
@@ -168,5 +175,22 @@ public final class BluestarCraftPlugin extends JavaPlugin
     public YamlFile getLang()
     {
         return lang;
+    }
+
+    public boolean isAir(ItemStack itemStack)
+    {
+        if (version>=13)
+        {
+            return itemStack.getType().isAir();
+        }
+        else
+        {
+            return itemStack.getType()==Material.AIR;
+        }
+    }
+
+    public double getVersion()
+    {
+        return version;
     }
 }

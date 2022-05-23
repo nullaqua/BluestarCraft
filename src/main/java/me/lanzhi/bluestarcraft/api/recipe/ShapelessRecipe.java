@@ -3,6 +3,7 @@ package me.lanzhi.bluestarcraft.api.recipe;
 import me.lanzhi.bluestarapi.Api.config.AutoSerializeInterface;
 import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
+import me.lanzhi.bluestarcraft.api.BluestarCraft;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -103,7 +104,7 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         Map<Material, Integer> map1=new HashMap<>();
         for (ItemStack itemStack: inventory.getItems())
         {
-            if (itemStack==null||itemStack.getType().isAir())
+            if (itemStack==null||itemStack.getType()==Material.AIR)
             {
                 continue;
             }

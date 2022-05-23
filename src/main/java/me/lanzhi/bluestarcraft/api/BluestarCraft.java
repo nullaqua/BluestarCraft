@@ -2,6 +2,7 @@ package me.lanzhi.bluestarcraft.api;
 
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
 import me.lanzhi.bluestarcraft.api.recipe.Recipe;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,5 +62,10 @@ public final class BluestarCraft
             return;
         }
         BluestarCraft.plugin=plugin;
+    }
+
+    private static double getVersion()
+    {
+        return Double.parseDouble(Bukkit.getBukkitVersion().substring(2));
     }
 }

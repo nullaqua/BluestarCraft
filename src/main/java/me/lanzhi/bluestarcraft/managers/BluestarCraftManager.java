@@ -85,7 +85,7 @@ public final class BluestarCraftManager
         }
         CraftInventory inventory=new CraftInventory(in);
         ItemStack item=in.getItem(24);
-        if (item==null||item.getType().isAir())
+        if (item==null||plugin.isAir(item))
         {
             return;
         }
@@ -99,7 +99,7 @@ public final class BluestarCraftManager
                 for (int j=0;j<5;j++)
                 {
                     ItemStack itemStack=inventory.getItem(i,j);
-                    if (itemStack.getType().isAir())
+                    if (plugin.isAir(itemStack))
                     {
                         stringBuilder.append(' ');
                     }
@@ -238,7 +238,7 @@ public final class BluestarCraftManager
 
     public boolean isBluestarCraftTable(ItemStack itemStack)
     {
-        if (itemStack==null||itemStack.getType().isAir())
+        if (itemStack==null||plugin.isAir(itemStack))
         {
             return false;
         }
@@ -247,7 +247,7 @@ public final class BluestarCraftManager
 
     public void give(Entity owner,ItemStack item)
     {
-        if (item==null||item.getType().isAir()||item.getAmount()==0)
+        if (item==null||plugin.isAir(item)||item.getAmount()==0)
         {
             return;
         }
@@ -274,7 +274,7 @@ public final class BluestarCraftManager
         for (int i: craftItem)
         {
             ItemStack itemStack=inventory.getItem(i);
-            if (itemStack==null||itemStack.getType().isAir())
+            if (itemStack==null||plugin.isAir(itemStack))
             {
                 continue;
             }
@@ -296,7 +296,7 @@ public final class BluestarCraftManager
             {
                 continue;
             }
-            if (!itemStack.getType().isAir())
+            if (!plugin.isAir(itemStack))
             {
                 if (max)
                 {
@@ -304,7 +304,7 @@ public final class BluestarCraftManager
                     for (int i: craftItem)
                     {
                         ItemStack item=inventory.getItem(i);
-                        if (item!=null&&!item.getType().isAir())
+                        if (item!=null&&!plugin.isAir(item))
                         {
                             cnt=Math.min(cnt,item.getAmount());
                         }
@@ -312,7 +312,7 @@ public final class BluestarCraftManager
                     for (int i: craftItem)
                     {
                         ItemStack itemStack1=inventory.getItem(i);
-                        if (itemStack1!=null&&!itemStack1.getType().isAir())
+                        if (itemStack1!=null&&!plugin.isAir(itemStack1))
                         {
                             itemStack1.setAmount(itemStack1.getAmount()-cnt);
                         }
@@ -326,7 +326,7 @@ public final class BluestarCraftManager
                     for (int i: craftItem)
                     {
                         ItemStack itemStack1=inventory.getItem(i);
-                        if (itemStack1!=null&&!itemStack1.getType().isAir())
+                        if (itemStack1!=null&&!plugin.isAir(itemStack1))
                         {
                             itemStack1.setAmount(itemStack1.getAmount()-1);
                         }
@@ -345,14 +345,16 @@ public final class BluestarCraftManager
         for (Recipe recipe: recipes.values())
         {
             itemStack=recipe.getResult(new CraftInventory(inventory));
-            if (itemStack!=null&&!itemStack.getType().isAir())
+            if (itemStack!=null&&!plugin.isAir(itemStack))
             {
                 break;
             }
         }
-        if (itemStack!=null&&!itemStack.getType().isAir())
+        if (itemStack!=null&&!plugin.isAir(itemStack))
         {
-            inventory.setItem(24,itemStack);
+            NBTItem item=new NBTItem(itemStack);
+            item.setUUID("BluestarCraft.block_replication",UUID.randomUUID());
+            inventory.setItem(24,item.getItem());
         }
         else
         {

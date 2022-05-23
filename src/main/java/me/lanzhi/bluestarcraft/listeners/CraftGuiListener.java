@@ -35,12 +35,12 @@ public final class CraftGuiListener implements Listener
         {
             ItemStack cursor=event.getCursor();
             ItemStack current=event.getCurrentItem();
-            if (cursor!=null&&!cursor.getType().isAir()&&event.getSlot()==24)
+            if (cursor!=null&&!plugin.isAir(cursor)&&event.getSlot()==24)
             {
                 event.setCancelled(true);
                 return;
             }
-            if (current!=null&&!current.getType().isAir())
+            if (current!=null&&!plugin.isAir(current))
             {
                 if (manager.empty.contains(event.getSlot()))
                 {
