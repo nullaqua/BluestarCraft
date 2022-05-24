@@ -36,9 +36,18 @@ public class craftCommand implements CommandExecutor, TabExecutor
         }
         switch (args[0])
         {
-            case "open" -> manager.openCraftGui((Player) sender);
-            case "list" -> sender.sendMessage(manager.getRecipeNames().toArray(new String[0]));
-            case "register" -> {
+            case "open":
+            {
+                manager.openCraftGui((Player) sender);
+                return true;
+            }
+            case "list":
+            {
+                sender.sendMessage(manager.getRecipeNames().toArray(new String[0]));
+                return true;
+            }
+            case "register":
+            {
                 if (args.length<3)
                 {
                     sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
@@ -48,14 +57,20 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 boolean shape="shaped".equals(args[2]);
                 boolean exact=shape&&"exact".equals(args[3]);
                 plugin.getBluestarCraftManager().openRegisterGui((Player) sender,
-                                                                 new BluestarCraftManager.RecipeData(name,shape,exact));
+                                                                 new BluestarCraftManager.RecipeData(name,shape,exact)
+                                                                );
+                return true;
             }
-            case "delete" ->
-                    {
-                        manager.removeRecipe(args[1]);
-                        sender.sendMessage(ChatColor.GREEN+plugin.getLang().getString("successfully_deleted"));
-                    }
-            default -> sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
+            case "delete":
+            {
+                manager.removeRecipe(args[1]);
+                sender.sendMessage(ChatColor.GREEN+plugin.getLang().getString("successfully_deleted"));
+                return true;
+            }
+            default:
+            {
+                sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
+            }
         }
         return true;
     }
@@ -72,16 +87,20 @@ public class craftCommand implements CommandExecutor, TabExecutor
         {
             switch (args.length)
             {
-                case 2 -> {
+                case 2:
+                {
                     return Collections.singletonList("name");
                 }
-                case 3 -> {
+                case 3:
+                {
                     return Arrays.asList("shaped","shapeless");
                 }
-                case 4 -> {
+                case 4:
+                {
                     return Arrays.asList("exact","material");
                 }
-                default -> {
+                default:
+                {
                     return Collections.emptyList();
                 }
             }

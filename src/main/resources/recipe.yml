@@ -6,13 +6,13 @@ shaped:
       - 'aaaaa'
       - ' aaa'
       - '  a'
-    result: 'minecraft:diamond_block'
+    result: 'diamond_block'
     amount: 2
     ingredient:
-      a: 'minecraft:diamond' #也可以直接写diamond
+      a: 'diamond'
 shapeless:
   recipe2:
     ingredient:
       diamond: 20
-    result: 'minecraft:diamond_block'
+    result: 'diamond_block'
     amount: 5

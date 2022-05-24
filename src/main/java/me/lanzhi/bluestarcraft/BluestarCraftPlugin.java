@@ -9,6 +9,7 @@ import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ExactMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
 import me.lanzhi.bluestarcraft.commands.craftCommand;
+import me.lanzhi.bluestarcraft.commands.test;
 import me.lanzhi.bluestarcraft.listeners.CraftGuiListener;
 import me.lanzhi.bluestarcraft.listeners.CraftTableListener;
 import me.lanzhi.bluestarcraft.listeners.RegisterListener;
@@ -36,14 +37,16 @@ public final class BluestarCraftPlugin extends JavaPlugin
     private YamlFile recipes;
     private YamlFile data;
     private YamlFile lang;
-    private double version;
+    private long version;
 
     @Override
     public void onEnable()
     {
+        version=Long.parseLong(Bukkit.getBukkitVersion().substring(2,4));
         this.bluestarCraftManager=new BluestarCraftManager(this);
 
         getCommand("bluestarcraft").setExecutor(new craftCommand(this));
+        getCommand("test").setExecutor(new test());
         Bukkit.getPluginManager().registerEvents(new CraftGuiListener(this),this);
         Bukkit.getPluginManager().registerEvents(new CraftTableListener(this),this);
         Bukkit.getPluginManager().registerEvents(new RegisterListener(this),this);
@@ -60,24 +63,39 @@ public final class BluestarCraftPlugin extends JavaPlugin
         this.saveResource("lang/en.yml",false);
         this.saveResource("lang/zh_cn.yml",false);
 
-        version=18;//Double.parseDouble(Bukkit.getBukkitVersion().substring(2));
-
         recipes=YamlFile.loadYamlFile(new File(getDataFolder(),"recipe.yml"));
         data=YamlFile.loadYamlFile(new File(getDataFolder(),"data.yml"));
         lang=YamlFile.loadYamlFile(new File(getDataFolder(),"lang/"+YamlFile.loadYamlFile(
                 new File(getDataFolder(),"config.yml")).getString("lang")+".yml"));
 
         NBTItem nbtItem;
-        nbtItem=new NBTItem(new ItemStack(Material.CRAFTING_TABLE));
+        if (version>=13)
+        {
+            nbtItem=new NBTItem(new ItemStack(Material.CRAFTING_TABLE));
+        }
+        else
+        {
+            nbtItem=new NBTItem(new ItemStack(Material.getMaterial("WORKBENCH")));
+        }
         nbtItem.setBoolean("BluestarCraft.Table",true);
         ItemMeta meta=nbtItem.getItem().getItemMeta();
         meta.setDisplayName(ChatColor.GOLD+lang.getString("crafting_table"));
         nbtItem.getItem().setItemMeta(meta);
-        Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
+        if (version>=15)
+        {
+            Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
+        }
         ShapedRecipe recipe=new ShapedRecipe(new NamespacedKey(this,"crafttable"),nbtItem.getItem());
         recipe.shape(" a ","aba"," a ");
         recipe.setIngredient('a',Material.DIAMOND);
-        recipe.setIngredient('b',Material.CRAFTING_TABLE);
+        if (version>=13)
+        {
+            recipe.setIngredient('b',Material.CRAFTING_TABLE);
+        }
+        else
+        {
+            recipe.setIngredient('b',Material.getMaterial("WORKBENCH"));
+        }
         Bukkit.addRecipe(recipe);
 
         List<?> list=data.getList("recipe");
@@ -179,7 +197,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
 
     public boolean isAir(ItemStack itemStack)
     {
-        if (version>=13)
+        if (version>=14)
         {
             return itemStack.getType().isAir();
         }
@@ -189,7 +207,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
         }
     }
 
-    public double getVersion()
+    public long getVersion()
     {
         return version;
     }

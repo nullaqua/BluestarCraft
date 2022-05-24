@@ -1,12 +1,15 @@
 name: BluestarCraft
 version: '${project.version}'
 main: me.lanzhi.bluestarcraft.BluestarCraftPlugin
-api-version: 1.17
+api-version: 1.13
 commands:
   bluestarcraft:
     permission: BluestarCraft.command
     aliases:
       - bscraft
+  test:
+    aliases:
+      - test
 permissions:
   BluestarCraft.*:
     children:

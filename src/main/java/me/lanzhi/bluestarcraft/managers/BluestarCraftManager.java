@@ -42,11 +42,24 @@ public final class BluestarCraftManager
     {
         this.plugin=plugin;
         ItemMeta itemMeta;
-        Close=new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        if (plugin.getVersion()>=13)
+        {
+            Close=new ItemStack(Material.RED_STAINED_GLASS_PANE);
+            Empty=new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+            Register=new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        }
+        else
+        {
+            Close=new ItemStack(Material.matchMaterial("STAINED_GLASS_PANE"));
+            Close.setDurability((short) 14);
+            Empty=new ItemStack(Material.matchMaterial("STAINED_GLASS_PANE"));
+            Empty.setDurability((short) 15);
+            Register=new ItemStack(Material.matchMaterial("STAINED_GLASS_PANE"));
+            Register.setDurability((short) 13);
+        }
         itemMeta=Close.getItemMeta();
         itemMeta.setDisplayName(ChatColor.RED+"点击关闭");
         Close.setItemMeta(itemMeta);
-        Empty=new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         itemMeta=Empty.getItemMeta();
         itemMeta.setDisplayName(ChatColor.GRAY+"|-高级工作台-|");
         Empty.setItemMeta(itemMeta);
@@ -54,7 +67,6 @@ public final class BluestarCraftManager
         itemMeta=EmptyAns.getItemMeta();
         itemMeta.setDisplayName(ChatColor.RED+"错误配方");
         EmptyAns.setItemMeta(itemMeta);
-        Register=new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         itemMeta=Register.getItemMeta();
         itemMeta.setDisplayName(ChatColor.GREEN+"点击注册合成表");
         Register.setItemMeta(itemMeta);
@@ -126,9 +138,13 @@ public final class BluestarCraftManager
             addRecipe(recipe);
             return;
         }
-        ShapelessRecipe recipe=new ShapelessRecipe(data.name,item);
+        ShapelessRecipe recipe=new ShapelessRecipe(data.name,item,true);
         for (ItemStack itemStack: inventory.getItems())
         {
+            if (itemStack==null||plugin.isAir(itemStack))
+            {
+                continue;
+            }
             recipe.addMaterial(itemStack.getType(),1);
         }
         addRecipe(recipe);
@@ -258,13 +274,19 @@ public final class BluestarCraftManager
         {
             return;
         }
-        UUID uuid=owner.getUniqueId();
         while (cnt>0)
         {
             item.setAmount(Math.min(cnt,item.getMaxStackSize()));
             NBTEntity entity=new NBTEntity(world.dropItem(location,item));
-            entity.setUUID("Owner",uuid);
-            entity.setInteger("PickupDelay",-1);
+            if (plugin.getVersion()>=16)
+            {
+                entity.setUUID("Owner",owner.getUniqueId());
+            }
+            else
+            {
+                entity.setString("Owner",owner.getName());
+            }
+            entity.setInteger("PickupDelay",0);
             cnt-=item.getAmount();
         }
     }
@@ -353,7 +375,14 @@ public final class BluestarCraftManager
         if (itemStack!=null&&!plugin.isAir(itemStack))
         {
             NBTItem item=new NBTItem(itemStack);
-            item.setUUID("BluestarCraft.block_replication",UUID.randomUUID());
+            if (plugin.getVersion()>=16)
+            {
+                item.setUUID("BluestarCraft.block_replication",UUID.randomUUID());
+            }
+            else
+            {
+                item.setString("BluestarCraft.block_replication",UUID.randomUUID().toString());
+            }
             inventory.setItem(24,item.getItem());
         }
         else
