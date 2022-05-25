@@ -7,9 +7,6 @@ commands:
     permission: BluestarCraft.command
     aliases:
       - bscraft
-  test:
-    aliases:
-      - test
 permissions:
   BluestarCraft.*:
     children:

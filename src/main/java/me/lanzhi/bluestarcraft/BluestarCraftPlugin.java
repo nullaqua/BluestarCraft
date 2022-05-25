@@ -9,7 +9,6 @@ import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ExactMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
 import me.lanzhi.bluestarcraft.commands.craftCommand;
-import me.lanzhi.bluestarcraft.commands.test;
 import me.lanzhi.bluestarcraft.listeners.CraftGuiListener;
 import me.lanzhi.bluestarcraft.listeners.CraftTableListener;
 import me.lanzhi.bluestarcraft.listeners.RegisterListener;
@@ -37,16 +36,16 @@ public final class BluestarCraftPlugin extends JavaPlugin
     private YamlFile recipes;
     private YamlFile data;
     private YamlFile lang;
-    private long version;
+    private double version;
 
     @Override
     public void onEnable()
     {
-        version=Long.parseLong(Bukkit.getBukkitVersion().substring(2,4));
+        version=Double.parseDouble(Bukkit.getBukkitVersion().split("-")[0].substring(2));
+        info("识别到MInecraft版本: 1."+version);
         this.bluestarCraftManager=new BluestarCraftManager(this);
 
         getCommand("bluestarcraft").setExecutor(new craftCommand(this));
-        getCommand("test").setExecutor(new test());
         Bukkit.getPluginManager().registerEvents(new CraftGuiListener(this),this);
         Bukkit.getPluginManager().registerEvents(new CraftTableListener(this),this);
         Bukkit.getPluginManager().registerEvents(new RegisterListener(this),this);
@@ -85,7 +84,15 @@ public final class BluestarCraftPlugin extends JavaPlugin
         {
             Bukkit.removeRecipe(new NamespacedKey(this,"crafttable"));
         }
-        ShapedRecipe recipe=new ShapedRecipe(new NamespacedKey(this,"crafttable"),nbtItem.getItem());
+        ShapedRecipe recipe;
+        if (version>=12)
+        {
+            recipe=new ShapedRecipe(new NamespacedKey(this,"crafttable"),nbtItem.getItem());
+        }
+        else
+        {
+            recipe=new ShapedRecipe(nbtItem.getItem());
+        }
         recipe.shape(" a ","aba"," a ");
         recipe.setIngredient('a',Material.DIAMOND);
         if (version>=13)
@@ -113,7 +120,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
         }
         loadRecipes();
         new Metrics(this);
-        System.out.println("BluestarCraft"+lang.getString("enable"));
+        info("BluestarCraft"+lang.getString("enable"));
     }
 
     @Override
@@ -148,7 +155,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
         }
         data.set("recipe",recipes);
         data.save();
-        System.out.println("BluestarCraft"+lang.getString("disable"));
+        info("BluestarCraft"+lang.getString("disable"));
     }
 
     public BluestarCraftManager getBluestarCraftManager()
@@ -207,8 +214,13 @@ public final class BluestarCraftPlugin extends JavaPlugin
         }
     }
 
-    public long getVersion()
+    public double getVersion()
     {
         return version;
+    }
+
+    public void info(String message)
+    {
+        Bukkit.getLogger().info(message);
     }
 }

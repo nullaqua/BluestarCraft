@@ -28,10 +28,18 @@ public final class CraftTableListener implements Listener
         {
             return;
         }
-        ItemStack itemStack=event.getPlayer().getInventory().getItemInMainHand();
-        if (plugin.isAir(itemStack))
+        ItemStack itemStack;
+        if (plugin.getVersion()>=9)
         {
-            itemStack=event.getPlayer().getInventory().getItemInOffHand();
+            itemStack=event.getPlayer().getInventory().getItemInMainHand();
+            if (plugin.isAir(itemStack))
+            {
+                itemStack=event.getPlayer().getInventory().getItemInOffHand();
+            }
+        }
+        else
+        {
+            itemStack=event.getPlayer().getInventory().getItemInHand();
         }
         if (plugin.getBluestarCraftManager().isBluestarCraftTable(itemStack))
         {

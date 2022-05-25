@@ -167,7 +167,7 @@ public final class BluestarCraftManager
 
     public void addRecipe(@NotNull Recipe recipe)
     {
-        System.out.println("注册合成表: "+recipe.getName());
+        plugin.info("注册合成表: "+recipe.getName());
         recipes.put(recipe.getName(),recipe);
     }
 
@@ -183,13 +183,13 @@ public final class BluestarCraftManager
 
     public boolean removeRecipe(@NotNull Recipe recipe)
     {
-        System.out.println("移除合成表: "+recipe.getName());
+        plugin.info("移除合成表: "+recipe.getName());
         return recipes.values().remove(recipe);
     }
 
     public Recipe removeRecipe(String name)
     {
-        System.out.println("移除合成表: "+name);
+        plugin.info("移除合成表: "+name);
         return recipes.remove(name);
     }
 
