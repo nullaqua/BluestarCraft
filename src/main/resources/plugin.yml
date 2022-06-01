@@ -7,10 +7,14 @@ commands:
     permission: BluestarCraft.command
     aliases:
       - bscraft
+  opencraft:
+    permission: BluestarCraft.opencraft
 permissions:
   BluestarCraft.*:
     children:
       BluestarCraft.command:
+        default: op
+      BluestarCraft.opencraft:
         default: op
 depend:
   - NBTAPI

@@ -9,6 +9,7 @@ import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ExactMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
 import me.lanzhi.bluestarcraft.commands.craftCommand;
+import me.lanzhi.bluestarcraft.commands.opencraftCommand;
 import me.lanzhi.bluestarcraft.listeners.CraftGuiListener;
 import me.lanzhi.bluestarcraft.listeners.CraftTableListener;
 import me.lanzhi.bluestarcraft.listeners.RegisterListener;
@@ -46,6 +47,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
         this.bluestarCraftManager=new BluestarCraftManager(this);
 
         getCommand("bluestarcraft").setExecutor(new craftCommand(this));
+        getCommand("opencraft").setExecutor(new opencraftCommand(this));
         Bukkit.getPluginManager().registerEvents(new CraftGuiListener(this),this);
         Bukkit.getPluginManager().registerEvents(new CraftTableListener(this),this);
         Bukkit.getPluginManager().registerEvents(new RegisterListener(this),this);

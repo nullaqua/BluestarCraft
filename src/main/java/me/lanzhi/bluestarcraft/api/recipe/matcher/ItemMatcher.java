@@ -6,4 +6,6 @@ import org.bukkit.inventory.ItemStack;
 public interface ItemMatcher extends ConfigurationSerializable, Cloneable
 {
     boolean match(ItemStack itemStack);
+
+    public ItemMatcher clone();
 }
