@@ -3,21 +3,26 @@ package me.lanzhi.bluestarcraft.api.recipe;
 import me.lanzhi.bluestarapi.Api.config.AutoSerializeInterface;
 import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
+import me.lanzhi.bluestarcraft.api.BluestarCraft;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ItemMatcher;
+import me.lanzhi.bluestarcraft.api.recipe.matcher.ItemMatcherToBukkitAble;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 
 import java.util.*;
 
 @SerializeAs("BluestarCraft.ShapedRecipe")
-public final class ShapedRecipe implements Recipe, AutoSerializeInterface
+public final class ShapedRecipe implements RecipeToBukkitAble, AutoSerializeInterface
 {
     private final String name;
-    private ItemStack result;
-    private List<String> lines;
     @SpecialSerialize
     private final boolean save;
+    private final boolean toBukkit;
+    private ItemStack result;
+    private List<String> lines;
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
     private Map<Character, ItemMatcher> ingredient=new HashMap<>();
 
@@ -27,6 +32,7 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         lines=null;
         name=null;
         save=true;
+        toBukkit=false;
     }
 
     public ShapedRecipe(String name,ItemStack result,String... lines)
@@ -36,7 +42,13 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
 
     public ShapedRecipe(String name,ItemStack result,boolean needSave,String... lines)
     {
+        this(name,result,needSave,false,lines);
+    }
+
+    public ShapedRecipe(String name,ItemStack result,boolean needSave,boolean ToBukkit,String... lines)
+    {
         this.save=needSave;
+        this.toBukkit=ToBukkit;
         this.name=name;
         this.result=result;
         this.lines=new ArrayList<>(Arrays.asList(lines));
@@ -85,7 +97,7 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
                 this.lines.add(i,this.lines.remove(i)+" ");
             }
         }
-        setIngredient(' ',MaterialMatcher.EMPTY_MATCHER);
+        setIngredient(' ',ItemMatcher.EMPTY_MATCHER);
     }
 
     public static Map<String, ItemMatcher> serialize(Map<Character, ItemMatcher> map)
@@ -211,5 +223,43 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         {
             return null;
         }
+    }
+
+    @Override
+    public org.bukkit.inventory.ShapedRecipe toBukkit()
+    {
+        if (!toBukkit)
+        {
+            return null;
+        }
+        for (int i=4;i>=0;i--)
+        {
+            if (!lines.get(i).replace(" ","").isEmpty())
+            {
+                if (i>=3)
+                {
+                    return null;
+                }
+            }
+            if (!lines.get(i).substring(3).replace(" ","").isEmpty())
+            {
+                return null;
+            }
+        }
+        org.bukkit.inventory.ShapedRecipe recipe=new org.bukkit.inventory.ShapedRecipe(
+                new NamespacedKey(BluestarCraft.getPlugin(),name),result);
+        recipe.shape(lines.get(0).substring(0,3),lines.get(1).substring(0,3),lines.get(2).substring(0,3));
+        for (Map.Entry<Character, ItemMatcher> entry: ingredient.entrySet())
+        {
+            if (entry.getKey()!=' ')
+            {
+                if (!(entry.getValue() instanceof ItemMatcherToBukkitAble))
+                {
+                    return null;
+                }
+                recipe.setIngredient(entry.getKey(),(RecipeChoice) ((ItemMatcherToBukkitAble) entry.getValue()).toBukkit());
+            }
+        }
+        return recipe;
     }
 }

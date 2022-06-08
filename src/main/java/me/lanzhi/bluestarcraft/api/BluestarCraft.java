@@ -64,6 +64,11 @@ public final class BluestarCraft
         BluestarCraft.plugin=plugin;
     }
 
+    public static BluestarCraftPlugin getPlugin()
+    {
+        return plugin;
+    }
+
     private static double getVersion()
     {
         return Double.parseDouble(Bukkit.getBukkitVersion().substring(2));

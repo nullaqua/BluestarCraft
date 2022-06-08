@@ -3,10 +3,7 @@ package me.lanzhi.bluestarcraft.managers;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
-import me.lanzhi.bluestarcraft.api.recipe.CraftInventory;
-import me.lanzhi.bluestarcraft.api.recipe.Recipe;
-import me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe;
-import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;
+import me.lanzhi.bluestarcraft.api.recipe.*;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ExactMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ItemMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
@@ -130,7 +127,7 @@ public final class BluestarCraftManager
                 }
                 list.add(stringBuilder.toString());
             }
-            ShapedRecipe recipe=new ShapedRecipe(data.name,item,true,list.toArray(new String[0]));
+            ShapedRecipe recipe=new ShapedRecipe(data.name,item,true,data.toBukkit,list.toArray(new String[0]));
             for (Map.Entry<Character, ItemMatcher> entry: map.entrySet())
             {
                 recipe.setIngredient(entry.getKey(),entry.getValue());
@@ -138,7 +135,7 @@ public final class BluestarCraftManager
             addRecipe(recipe);
             return;
         }
-        ShapelessRecipe recipe=new ShapelessRecipe(data.name,item,true);
+        ShapelessRecipe recipe=new ShapelessRecipe(data.name,item,true,data.toBukkit);
         for (ItemStack itemStack: inventory.getItems())
         {
             if (itemStack==null||plugin.isAir(itemStack))
@@ -168,7 +165,23 @@ public final class BluestarCraftManager
     public void addRecipe(@NotNull Recipe recipe)
     {
         plugin.info("注册合成表: "+recipe.getName());
+        if (plugin.getVersion()>=15)
+        {
+            Bukkit.removeRecipe(new NamespacedKey(plugin,recipe.getName()));
+        }
         recipes.put(recipe.getName(),recipe);
+        if (plugin.getVersion()<14)
+        {
+            return;
+        }
+        if (recipe instanceof RecipeToBukkitAble)
+        {
+            org.bukkit.inventory.Recipe bukkitRecipe=((RecipeToBukkitAble) recipe).toBukkit();
+            if (bukkitRecipe!=null)
+            {
+                Bukkit.addRecipe(bukkitRecipe);
+            }
+        }
     }
 
     public boolean containsRecipe(Recipe recipe)
@@ -184,12 +197,20 @@ public final class BluestarCraftManager
     public boolean removeRecipe(@NotNull Recipe recipe)
     {
         plugin.info("移除合成表: "+recipe.getName());
+        if (plugin.getVersion()>=15)
+        {
+            Bukkit.removeRecipe(new NamespacedKey(plugin,recipe.getName()));
+        }
         return recipes.values().remove(recipe);
     }
 
     public Recipe removeRecipe(String name)
     {
         plugin.info("移除合成表: "+name);
+        if (plugin.getVersion()>=15)
+        {
+            Bukkit.removeRecipe(new NamespacedKey(plugin,name));
+        }
         return recipes.remove(name);
     }
 
@@ -396,12 +417,22 @@ public final class BluestarCraftManager
         final String name;
         final boolean shape;
         final boolean exact;
+        final boolean toBukkit;
+
+        public RecipeData(String name,boolean shape,boolean exact,boolean toBukkit)
+        {
+            this.name=name;
+            this.shape=shape;
+            this.exact=exact;
+            this.toBukkit=toBukkit;
+        }
 
         public RecipeData(String name,boolean shape,boolean exact)
         {
             this.name=name;
             this.shape=shape;
             this.exact=exact;
+            this.toBukkit=false;
         }
     }
 

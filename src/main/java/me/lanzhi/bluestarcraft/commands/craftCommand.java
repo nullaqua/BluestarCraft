@@ -55,9 +55,11 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 }
                 String name=args[1];
                 boolean shape="shaped".equals(args[2]);
-                boolean exact=shape&&"exact".equals(args[3]);
+                boolean exact="exact".equals(args[3]);
+                boolean toBukkit="toBukkit".equals(args[4]);
                 plugin.getBluestarCraftManager().openRegisterGui((Player) sender,
-                                                                 new BluestarCraftManager.RecipeData(name,shape,exact)
+                                                                 new BluestarCraftManager.RecipeData(name,shape,exact,
+                                                                                                     toBukkit)
                                                                 );
                 return true;
             }
@@ -98,6 +100,10 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 case 4:
                 {
                     return Arrays.asList("exact","material");
+                }
+                case 5:
+                {
+                    return Collections.singletonList("toBukkit");
                 }
                 default:
                 {

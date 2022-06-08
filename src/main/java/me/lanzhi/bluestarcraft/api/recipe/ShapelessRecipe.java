@@ -5,18 +5,21 @@ import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
 import me.lanzhi.bluestarcraft.api.BluestarCraft;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @SerializeAs("BluestarCraft.ShapelessRecipe")
-public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
+public final class ShapelessRecipe implements RecipeToBukkitAble, AutoSerializeInterface
 {
     private final String name;
     @SpecialSerialize
     private final boolean save;
+    private final boolean toBukkit;
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
     private Map<Material, Integer> map=new HashMap<>();
     private ItemStack result;
@@ -26,20 +29,25 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         result=null;
         name=null;
         save=true;
+        toBukkit=false;
     }
 
-    public ShapelessRecipe(String name,ItemStack result,boolean needSave)
+    public ShapelessRecipe(String name,ItemStack result,boolean needSave,boolean toBukkit)
     {
         this.save=needSave;
         this.name=name;
         this.result=result;
+        this.toBukkit=toBukkit;
+    }
+
+    public ShapelessRecipe(String name,ItemStack result,boolean needSave)
+    {
+        this(name,result,needSave,false);
     }
 
     public ShapelessRecipe(String name,ItemStack result)
     {
-        this.save=false;
-        this.name=name;
-        this.result=result;
+        this(name,result,false,false);
     }
 
     public static Map<String, Integer> serialize(Map<Material, Integer> map)
@@ -154,5 +162,27 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         {
             return null;
         }
+    }
+
+    @Override
+    public org.bukkit.inventory.ShapelessRecipe toBukkit()
+    {
+        if (!toBukkit)
+        {
+            return null;
+        }
+        org.bukkit.inventory.ShapelessRecipe recipe=new org.bukkit.inventory.ShapelessRecipe(
+                new NamespacedKey(BluestarCraft.getPlugin(),name),result);
+        int cnt=0;
+        for (Map.Entry<Material,Integer>entry:this.map.entrySet())
+        {
+            recipe.addIngredient(entry.getKey(),entry.getValue());
+            cnt+=entry.getValue();
+        }
+        if (cnt>9)
+        {
+            return null;
+        }
+        return recipe;
     }
 }

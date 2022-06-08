@@ -154,6 +154,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
             {
                 recipes.add(recipe);
             }
+            Bukkit.removeRecipe(new NamespacedKey(this,recipe.getName()));
         }
         data.set("recipe",recipes);
         data.save();

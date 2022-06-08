@@ -3,16 +3,26 @@ package me.lanzhi.bluestarcraft.api.recipe.matcher;
 import me.lanzhi.bluestarapi.Api.config.AutoSerializeInterface;
 import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 @SerializeAs("BluestarCraft.ExactMatcher")
-public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
+public final class ExactMatcher implements ItemMatcherToBukkitAble, AutoSerializeInterface
 {
     private final ArrayList<ItemStack> itemStacks=new ArrayList<>();
 
     public ExactMatcher()
     {
+    }
+
+    public ExactMatcher(Collection<ItemStack> itemStacks)
+    {
+        for (ItemStack itemStack: itemStacks)
+        {
+            this.itemStacks.add(itemStack.clone());
+        }
     }
 
     public ExactMatcher(ItemStack... itemStacks)
@@ -40,5 +50,11 @@ public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
     public ExactMatcher clone()
     {
         return new ExactMatcher(itemStacks.toArray(new ItemStack[0]));
+    }
+
+    @Override
+    public Object toBukkit()
+    {
+        return new RecipeChoice.ExactChoice(itemStacks);
     }
 }

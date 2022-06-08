@@ -5,16 +5,16 @@ import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @SerializeAs("BluestarCraft.MaterialMatcher")
-public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterface
+public final class MaterialMatcher implements ItemMatcherToBukkitAble, AutoSerializeInterface
 {
-    @SpecialSerialize
-    public final static ItemMatcher EMPTY_MATCHER=new MaterialMatcher(null,Material.AIR);
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
     private List<Material> materials;
 
@@ -26,6 +26,11 @@ public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterfac
     public MaterialMatcher(Material... materials)
     {
         this.materials=Arrays.asList(materials.clone());
+    }
+
+    public MaterialMatcher(Collection<Material>materials)
+    {
+        this.materials=new ArrayList<>(materials);
     }
 
     public static List<String> serialize(List<Material> materials)
@@ -63,5 +68,11 @@ public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterfac
     public MaterialMatcher clone()
     {
         return new MaterialMatcher(materials.toArray(new Material[0]));
+    }
+
+    @Override
+    public Object toBukkit()
+    {
+        return new RecipeChoice.MaterialChoice(this.materials);
     }
 }
