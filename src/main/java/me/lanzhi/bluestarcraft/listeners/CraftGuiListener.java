@@ -9,6 +9,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class CraftGuiListener implements Listener
 {
     private final BluestarCraftManager manager;
@@ -20,52 +22,38 @@ public final class CraftGuiListener implements Listener
         this.plugin=plugin;
     }
 
-    @EventHandler(priority=EventPriority.HIGHEST)
+    @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent event)
     {
-        if (event.isCancelled())
-        {
-            return;
-        }
         if (!manager.containsInventory(event.getInventory()))
         {
             return;
         }
         if (manager.containsInventory(event.getClickedInventory()))
         {
-            ItemStack cursor=event.getCursor();
-            ItemStack current=event.getCurrentItem();
-            if (cursor!=null&&!plugin.isAir(cursor)&&event.getSlot()==24)
+            if (manager.empty.contains(event.getSlot())||manager.ansItems.contains(event.getSlot()))
             {
                 event.setCancelled(true);
                 return;
             }
-            if (current!=null&&!plugin.isAir(current))
+            if (event.getSlot()==plugin.getBluestarCraftManager().No)
             {
-                if (manager.empty.contains(event.getSlot()))
-                {
-                    event.setCancelled(true);
-                    return;
-                }
-                if (event.getSlot()==25)
-                {
-                    event.setCancelled(true);
-                    event.getWhoClicked().closeInventory();
-                    return;
-                }
+                event.setCancelled(true);
+                event.getWhoClicked().closeInventory();
+                return;
             }
-            if (event.getSlot()==24)
+            if (event.getSlot()==plugin.getBluestarCraftManager().Yes)
             {
-                if (event.isShiftClick())
+                List<ItemStack>itemStacks=manager.make(event.getInventory(),event.isShiftClick());
+                if (itemStacks==null)
                 {
-                    manager.give(event.getWhoClicked(),manager.make(event.getInventory(),true));
-                    event.setCancelled(true);
+                    return;
                 }
-                else
+                for (ItemStack itemStack:itemStacks)
                 {
-                    event.setCursor(manager.make(event.getInventory(),false));
-                    event.setCancelled(true);
+                    manager.give(event.getWhoClicked(),itemStack);
                 }
+                event.setCancelled(true);
             }
         }
     }

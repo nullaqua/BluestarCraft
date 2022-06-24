@@ -1,6 +1,7 @@
 package me.lanzhi.bluestarcraft.commands;
 
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
+import me.lanzhi.bluestarcraft.api.recipe.Recipe;
 import me.lanzhi.bluestarcraft.managers.BluestarCraftManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,10 +58,8 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 String name=args[1];
                 boolean shape="shaped".equals(args[2]);
                 boolean exact="exact".equals(args[3]);
-                boolean toBukkit="toBukkit".equals(args[4]);
                 plugin.getBluestarCraftManager().openRegisterGui((Player) sender,
-                                                                 new BluestarCraftManager.RecipeData(name,shape,exact,
-                                                                                                     toBukkit)
+                                                                 new BluestarCraftManager.RecipeData(name,shape,exact)
                                                                 );
                 return true;
             }
@@ -69,6 +69,13 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 sender.sendMessage(ChatColor.GREEN+plugin.getLang().getString("successfully_deleted"));
                 return true;
             }
+            /*
+            case "debug":
+            {
+                Recipe recipe=manager.getRecipe(args[1]);
+                ((Player) sender).getInventory().addItem(recipe.getItems().toArray(new ItemStack[0]));
+            }
+            */
             default:
             {
                 sender.sendMessage(ChatColor.RED+plugin.getLang().getString("unknow_command"));
@@ -100,10 +107,6 @@ public class craftCommand implements CommandExecutor, TabExecutor
                 case 4:
                 {
                     return Arrays.asList("exact","material");
-                }
-                case 5:
-                {
-                    return Collections.singletonList("toBukkit");
                 }
                 default:
                 {

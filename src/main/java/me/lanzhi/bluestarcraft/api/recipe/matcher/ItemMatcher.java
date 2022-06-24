@@ -14,6 +14,8 @@ public interface ItemMatcher extends ConfigurationSerializable, Cloneable
 
     public ItemMatcher clone();
 
+    ItemStack get();
+
     static EmptyMatcher EMPTY_MATCHER=new EmptyMatcher();
 
     final class EmptyMatcher implements ItemMatcher
@@ -31,6 +33,12 @@ public interface ItemMatcher extends ConfigurationSerializable, Cloneable
         public ItemMatcher clone()
         {
             return EMPTY_MATCHER;
+        }
+
+        @Override
+        public ItemStack get()
+        {
+            return null;
         }
 
         @NotNull

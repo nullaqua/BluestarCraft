@@ -3,51 +3,63 @@ package me.lanzhi.bluestarcraft.api.recipe;
 import me.lanzhi.bluestarapi.Api.config.AutoSerializeInterface;
 import me.lanzhi.bluestarapi.Api.config.SerializeAs;
 import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
-import me.lanzhi.bluestarcraft.api.BluestarCraft;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @SerializeAs("BluestarCraft.ShapelessRecipe")
-public final class ShapelessRecipe implements RecipeToBukkitAble, AutoSerializeInterface
+public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
 {
     private final String name;
     @SpecialSerialize
     private final boolean save;
-    private final boolean toBukkit;
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
     private Map<Material, Integer> map=new HashMap<>();
-    private ItemStack result;
+    private ItemStack result, result1, result2, result3, result4;
 
     public ShapelessRecipe()
     {
         result=null;
         name=null;
         save=true;
-        toBukkit=false;
     }
 
-    public ShapelessRecipe(String name,ItemStack result,boolean needSave,boolean toBukkit)
+    public ShapelessRecipe(String name,List<ItemStack> result,boolean needSave)
     {
         this.save=needSave;
         this.name=name;
-        this.result=result;
-        this.toBukkit=toBukkit;
+        switch (result.size())
+        {
+            case 5:
+            {
+                result4=result.get(4);
+            }
+            case 4:
+            {
+                result3=result.get(3);
+            }
+            case 3:
+            {
+                result2=result.get(2);
+            }
+            case 2:
+            {
+                result1=result.get(1);
+            }
+            case 1:
+            {
+                this.result=result.get(0);
+            }
+            default:
+            {
+            }
+        }
     }
 
-    public ShapelessRecipe(String name,ItemStack result,boolean needSave)
+    public ShapelessRecipe(String name,List<ItemStack> result)
     {
-        this(name,result,needSave,false);
-    }
-
-    public ShapelessRecipe(String name,ItemStack result)
-    {
-        this(name,result,false,false);
+        this(name,result,false);
     }
 
     public static Map<String, Integer> serialize(Map<Material, Integer> map)
@@ -142,9 +154,9 @@ public final class ShapelessRecipe implements RecipeToBukkitAble, AutoSerializeI
     }
 
     @Override
-    public ItemStack getResult()
+    public List<ItemStack> getResult()
     {
-        return result;
+        return new ArrayList<>(Arrays.asList(result,result1,result2,result3,result4));
     }
 
     @Override
@@ -154,7 +166,11 @@ public final class ShapelessRecipe implements RecipeToBukkitAble, AutoSerializeI
         try
         {
             clone=(ShapelessRecipe) super.clone();
-            clone.result=this.result.clone();
+            clone.result=result;
+            clone.result1=result1;
+            clone.result2=result2;
+            clone.result3=result3;
+            clone.result4=result4;
             clone.map=new HashMap<>(map);
             return clone;
         }
@@ -162,27 +178,5 @@ public final class ShapelessRecipe implements RecipeToBukkitAble, AutoSerializeI
         {
             return null;
         }
-    }
-
-    @Override
-    public org.bukkit.inventory.ShapelessRecipe toBukkit()
-    {
-        if (!toBukkit)
-        {
-            return null;
-        }
-        org.bukkit.inventory.ShapelessRecipe recipe=new org.bukkit.inventory.ShapelessRecipe(
-                new NamespacedKey(BluestarCraft.getPlugin(),name),result);
-        int cnt=0;
-        for (Map.Entry<Material,Integer>entry:this.map.entrySet())
-        {
-            recipe.addIngredient(entry.getKey(),entry.getValue());
-            cnt+=entry.getValue();
-        }
-        if (cnt>9)
-        {
-            return null;
-        }
-        return recipe;
     }
 }

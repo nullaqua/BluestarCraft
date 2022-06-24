@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @SerializeAs("BluestarCraft.MaterialMatcher")
-public final class MaterialMatcher implements ItemMatcherToBukkitAble, AutoSerializeInterface
+public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterface
 {
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
     private List<Material> materials;
@@ -71,8 +71,8 @@ public final class MaterialMatcher implements ItemMatcherToBukkitAble, AutoSeria
     }
 
     @Override
-    public Object toBukkit()
+    public ItemStack get()
     {
-        return new RecipeChoice.MaterialChoice(this.materials);
+        return new ItemStack(materials.get(0));
     }
 }

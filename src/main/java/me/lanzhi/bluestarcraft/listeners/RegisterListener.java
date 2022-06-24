@@ -31,7 +31,7 @@ public class RegisterListener implements Listener
         {
             return;
         }
-        if (event.getSlot()==25)
+        if (event.getSlot()==plugin.getBluestarCraftManager().No)
         {
             event.setCancelled(true);
             event.getWhoClicked().closeInventory();
@@ -41,7 +41,7 @@ public class RegisterListener implements Listener
         {
             event.setCancelled(true);
         }
-        if (event.getSlot()==33)
+        if (event.getSlot()==plugin.getBluestarCraftManager().Yes)
         {
             event.setCancelled(true);
             manager.register(event.getInventory());

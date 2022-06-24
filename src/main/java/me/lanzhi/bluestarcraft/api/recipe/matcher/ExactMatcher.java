@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @SerializeAs("BluestarCraft.ExactMatcher")
-public final class ExactMatcher implements ItemMatcherToBukkitAble, AutoSerializeInterface
+public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
 {
     private final ArrayList<ItemStack> itemStacks=new ArrayList<>();
 
@@ -53,8 +53,8 @@ public final class ExactMatcher implements ItemMatcherToBukkitAble, AutoSerializ
     }
 
     @Override
-    public Object toBukkit()
+    public ItemStack get()
     {
-        return new RecipeChoice.ExactChoice(itemStacks);
+        return itemStacks.get(0);
     }
 }

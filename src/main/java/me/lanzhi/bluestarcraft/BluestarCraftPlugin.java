@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class BluestarCraftPlugin extends JavaPlugin
@@ -175,8 +176,8 @@ public final class BluestarCraftPlugin extends JavaPlugin
             for (String key: shaped.getKeys(false))
             {
                 me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe recipe=new me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe(
-                        key,new ItemStack(Material.matchMaterial(shaped.getString(key+".result")),
-                                          shaped.getInt(key+".amount")
+                        key,new ArrayList<>(Collections.singletonList(new ItemStack(Material.matchMaterial(shaped.getString(key+".result")),
+                              shaped.getInt(key+".amount")))
                 ),shaped.getStringList(key+".shape").toArray(new String[0]));
                 for (String s: shaped.getConfigurationSection(key+".ingredient").getKeys(false))
                 {
@@ -189,8 +190,8 @@ public final class BluestarCraftPlugin extends JavaPlugin
         {
             for (String key: shapeless.getKeys(false))
             {
-                ShapelessRecipe recipe=new ShapelessRecipe(key,new ItemStack(
-                        Material.matchMaterial(shapeless.getString(key+".result")),shapeless.getInt(key+".amount")));
+                ShapelessRecipe recipe=new ShapelessRecipe(key,new ArrayList<>(Collections.singletonList(new ItemStack(
+                        Material.matchMaterial(shapeless.getString(key+".result")),shapeless.getInt(key+".amount")))));
                 for (String s: shapeless.getConfigurationSection(key+".ingredient").getKeys(false))
                 {
                     recipe.addMaterial(Material.matchMaterial(s),shapeless.getInt(key+".ingredient."+s));

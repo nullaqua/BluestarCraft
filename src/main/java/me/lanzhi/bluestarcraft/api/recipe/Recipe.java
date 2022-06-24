@@ -3,6 +3,8 @@ package me.lanzhi.bluestarcraft.api.recipe;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public interface Recipe extends ConfigurationSerializable,Cloneable
 {
     String getName();
@@ -11,7 +13,7 @@ public interface Recipe extends ConfigurationSerializable,Cloneable
 
     boolean match(CraftInventory inventory);
 
-    default ItemStack getResult(CraftInventory inventory)
+    default List<ItemStack> getResult(CraftInventory inventory)
     {
         if (match(inventory))
         {
@@ -20,5 +22,5 @@ public interface Recipe extends ConfigurationSerializable,Cloneable
         return null;
     }
 
-    ItemStack getResult();
+    List<ItemStack> getResult();
 }

@@ -3,7 +3,10 @@ package me.lanzhi.bluestarcraft.managers;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
-import me.lanzhi.bluestarcraft.api.recipe.*;
+import me.lanzhi.bluestarcraft.api.recipe.CraftInventory;
+import me.lanzhi.bluestarcraft.api.recipe.Recipe;
+import me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe;
+import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ExactMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ItemMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
@@ -22,14 +25,18 @@ import java.util.*;
 
 public final class BluestarCraftManager
 {
-    public final List<Integer> empty=Arrays.asList(5,6,7,8,14,15,16,17,23,26,32,33,34,35,41,42,43,44);
+    public final List<Integer> empty=Arrays.asList(5,7,8,14,16,17,23,32,34,35,41,43,44);
+    public final List<Integer> ansItems=Arrays.asList(6,15,24,33,42);
     public final List<Integer> craftItem=Arrays.asList(0,1,2,3,4,9,10,11,12,13,18,19,20,21,22,27,28,29,30,31,36,37,38,
                                                        39,40
                                                       );
+    public final Integer Yes=25;
+    public final Integer No=26;
     public final ItemStack Close;
     public final ItemStack Empty;
     public final ItemStack EmptyAns;
     public final ItemStack Register;
+    public final ItemStack GetAns;
     private final List<Inventory> inventories=new ArrayList<>();
     private final Map<Inventory, RecipeData> registers=new HashMap<>();
     private final Map<String, Recipe> recipes=new HashMap<>();
@@ -44,6 +51,7 @@ public final class BluestarCraftManager
             Close=new ItemStack(Material.RED_STAINED_GLASS_PANE);
             Empty=new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
             Register=new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+            GetAns=new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         }
         else
         {
@@ -53,6 +61,8 @@ public final class BluestarCraftManager
             Empty.setDurability((short) 15);
             Register=new ItemStack(Material.matchMaterial("STAINED_GLASS_PANE"));
             Register.setDurability((short) 13);
+            GetAns=new ItemStack(Material.matchMaterial("STAINED_GLASS_PANE"));
+            GetAns.setDurability((short) 13);
         }
         itemMeta=Close.getItemMeta();
         itemMeta.setDisplayName(ChatColor.RED+"点击关闭");
@@ -67,6 +77,9 @@ public final class BluestarCraftManager
         itemMeta=Register.getItemMeta();
         itemMeta.setDisplayName(ChatColor.GREEN+"点击注册合成表");
         Register.setItemMeta(itemMeta);
+        itemMeta=GetAns.getItemMeta();
+        itemMeta.setDisplayName(ChatColor.GREEN+"合成");
+        GetAns.setItemMeta(itemMeta);
         new Updata().runTaskTimer(plugin,0,1);
     }
 
@@ -93,8 +106,17 @@ public final class BluestarCraftManager
             return;
         }
         CraftInventory inventory=new CraftInventory(in);
-        ItemStack item=in.getItem(24);
-        if (item==null||plugin.isAir(item))
+        List<ItemStack>itemStacks=new ArrayList<>();
+        boolean flag=false;
+        for (Integer integer:ansItems)
+        {
+            itemStacks.add(in.getItem(integer));
+            if (in.getItem(integer)!=null&&!plugin.isAir(in.getItem(integer)))
+            {
+                flag=true;
+            }
+        }
+        if (!flag)
         {
             return;
         }
@@ -127,7 +149,7 @@ public final class BluestarCraftManager
                 }
                 list.add(stringBuilder.toString());
             }
-            ShapedRecipe recipe=new ShapedRecipe(data.name,item,true,data.toBukkit,list.toArray(new String[0]));
+            ShapedRecipe recipe=new ShapedRecipe(data.name,itemStacks,true,list.toArray(new String[0]));
             for (Map.Entry<Character, ItemMatcher> entry: map.entrySet())
             {
                 recipe.setIngredient(entry.getKey(),entry.getValue());
@@ -135,7 +157,7 @@ public final class BluestarCraftManager
             addRecipe(recipe);
             return;
         }
-        ShapelessRecipe recipe=new ShapelessRecipe(data.name,item,true,data.toBukkit);
+        ShapelessRecipe recipe=new ShapelessRecipe(data.name,itemStacks,true);
         for (ItemStack itemStack: inventory.getItems())
         {
             if (itemStack==null||plugin.isAir(itemStack))
@@ -162,6 +184,11 @@ public final class BluestarCraftManager
         registers.remove(inventory);
     }
 
+    public Recipe getRecipe(String name)
+    {
+        return recipes.get(name);
+    }
+
     public void addRecipe(@NotNull Recipe recipe)
     {
         plugin.info("注册合成表: "+recipe.getName());
@@ -170,18 +197,6 @@ public final class BluestarCraftManager
             Bukkit.removeRecipe(new NamespacedKey(plugin,recipe.getName()));
         }
         recipes.put(recipe.getName(),recipe);
-        if (plugin.getVersion()<14)
-        {
-            return;
-        }
-        if (recipe instanceof RecipeToBukkitAble)
-        {
-            org.bukkit.inventory.Recipe bukkitRecipe=((RecipeToBukkitAble) recipe).toBukkit();
-            if (bukkitRecipe!=null)
-            {
-                Bukkit.addRecipe(bukkitRecipe);
-            }
-        }
     }
 
     public boolean containsRecipe(Recipe recipe)
@@ -197,20 +212,12 @@ public final class BluestarCraftManager
     public boolean removeRecipe(@NotNull Recipe recipe)
     {
         plugin.info("移除合成表: "+recipe.getName());
-        if (plugin.getVersion()>=15)
-        {
-            Bukkit.removeRecipe(new NamespacedKey(plugin,recipe.getName()));
-        }
         return recipes.values().remove(recipe);
     }
 
     public Recipe removeRecipe(String name)
     {
         plugin.info("移除合成表: "+name);
-        if (plugin.getVersion()>=15)
-        {
-            Bukkit.removeRecipe(new NamespacedKey(plugin,name));
-        }
         return recipes.remove(name);
     }
 
@@ -227,8 +234,12 @@ public final class BluestarCraftManager
         {
             inventory.setItem(i,plugin.getBluestarCraftManager().Empty);
         }
-        inventory.setItem(24,plugin.getBluestarCraftManager().EmptyAns);
-        inventory.setItem(25,plugin.getBluestarCraftManager().Close);
+        for (int i:plugin.getBluestarCraftManager().ansItems)
+        {
+            inventory.setItem(i,plugin.getBluestarCraftManager().EmptyAns);
+        }
+        inventory.setItem(No,plugin.getBluestarCraftManager().Close);
+        inventory.setItem(plugin.getBluestarCraftManager().Yes,plugin.getBluestarCraftManager().GetAns);
         plugin.getBluestarCraftManager().addInventory(inventory);
         return inventory;
     }
@@ -246,8 +257,8 @@ public final class BluestarCraftManager
         {
             inventory.setItem(i,plugin.getBluestarCraftManager().Empty);
         }
-        inventory.setItem(33,plugin.getBluestarCraftManager().Register);
-        inventory.setItem(25,plugin.getBluestarCraftManager().Close);
+        inventory.setItem(plugin.getBluestarCraftManager().Yes,plugin.getBluestarCraftManager().Register);
+        inventory.setItem(No,plugin.getBluestarCraftManager().Close);
         plugin.getBluestarCraftManager().addRegister(inventory,data);
         return inventory;
     }
@@ -326,57 +337,65 @@ public final class BluestarCraftManager
     }
 
     @Nullable
-    public ItemStack make(Inventory inventory,boolean max)
+    public List<ItemStack> make(Inventory inventory,boolean max)
     {
         for (Recipe recipe: recipes.values())
         {
-            ItemStack itemStack=recipe.getResult(new CraftInventory(inventory));
-            if (itemStack!=null)
+            List<ItemStack> itemStack_=recipe.getResult(new CraftInventory(inventory));
+            List<ItemStack> itemStacks=new ArrayList<>();
+            if (itemStack_!=null&&!itemStack_.isEmpty())
             {
-                itemStack=itemStack.clone();
+                for (ItemStack itemStack: itemStack_)
+                {
+                    itemStack=itemStack==null?new ItemStack(Material.AIR):itemStack;
+                    itemStacks.add(itemStack.clone());
+                }
             }
             else
             {
                 continue;
             }
-            if (!plugin.isAir(itemStack))
+            if (max)
             {
-                if (max)
+                int cnt=64;
+                for (int i: craftItem)
                 {
-                    int cnt=64;
-                    for (int i: craftItem)
+                    ItemStack item=inventory.getItem(i);
+                    if (item!=null&&!plugin.isAir(item))
                     {
-                        ItemStack item=inventory.getItem(i);
-                        if (item!=null&&!plugin.isAir(item))
-                        {
-                            cnt=Math.min(cnt,item.getAmount());
-                        }
+                        cnt=Math.min(cnt,item.getAmount());
                     }
-                    for (int i: craftItem)
-                    {
-                        ItemStack itemStack1=inventory.getItem(i);
-                        if (itemStack1!=null&&!plugin.isAir(itemStack1))
-                        {
-                            itemStack1.setAmount(itemStack1.getAmount()-cnt);
-                        }
-                        inventory.setItem(i,itemStack1);
-                    }
-                    itemStack.setAmount(itemStack.getAmount()*cnt);
-                    return itemStack;
                 }
-                else
+                for (int i: craftItem)
                 {
-                    for (int i: craftItem)
+                    ItemStack itemStack1=inventory.getItem(i);
+                    if (itemStack1!=null&&!plugin.isAir(itemStack1))
                     {
-                        ItemStack itemStack1=inventory.getItem(i);
-                        if (itemStack1!=null&&!plugin.isAir(itemStack1))
-                        {
-                            itemStack1.setAmount(itemStack1.getAmount()-1);
-                        }
-                        inventory.setItem(i,itemStack1);
+                        itemStack1.setAmount(itemStack1.getAmount()-cnt);
                     }
-                    return itemStack;
+                    inventory.setItem(i,itemStack1);
                 }
+                for (ItemStack itemStack: itemStacks)
+                {
+                    if (itemStack!=null&&!plugin.isAir(itemStack))
+                    {
+                        itemStack.setAmount(itemStack.getAmount()*cnt);
+                    }
+                }
+                return itemStacks;
+            }
+            else
+            {
+                for (int i: craftItem)
+                {
+                    ItemStack itemStack1=inventory.getItem(i);
+                    if (itemStack1!=null&&!plugin.isAir(itemStack1))
+                    {
+                        itemStack1.setAmount(itemStack1.getAmount()-1);
+                    }
+                    inventory.setItem(i,itemStack1);
+                }
+                return itemStacks;
             }
         }
         return null;
@@ -384,31 +403,54 @@ public final class BluestarCraftManager
 
     public void updata(Inventory inventory)
     {
-        ItemStack itemStack=null;
+        List<ItemStack> itemStack_=null;
         for (Recipe recipe: recipes.values())
         {
-            itemStack=recipe.getResult(new CraftInventory(inventory));
-            if (itemStack!=null&&!plugin.isAir(itemStack))
+            itemStack_=recipe.getResult(new CraftInventory(inventory));
+            if (itemStack_!=null&&!itemStack_.isEmpty())
             {
                 break;
             }
         }
-        if (itemStack!=null&&!plugin.isAir(itemStack))
+        if (itemStack_!=null&&!itemStack_.isEmpty())
         {
-            NBTItem item=new NBTItem(itemStack);
-            if (plugin.getVersion()>=16)
+            List<ItemStack>itemStacks=new ArrayList<>();
+            for (ItemStack itemStack:itemStack_)
             {
-                item.setUUID("BluestarCraft.block_replication",UUID.randomUUID());
+                if (itemStack==null||plugin.isAir(itemStack))
+                {
+                    itemStacks.add(new ItemStack(Material.AIR));
+                    continue;
+                }
+                NBTItem item=new NBTItem(itemStack.clone());
+                if (plugin.getVersion()>=16)
+                {
+                    item.setUUID("BluestarCraft.block_replication",UUID.randomUUID());
+                }
+                else
+                {
+                    item.setString("BluestarCraft.block_replication",UUID.randomUUID().toString());
+                }
+                itemStacks.add(item.getItem());
             }
-            else
+            for (int i=0;i<5;i++)
             {
-                item.setString("BluestarCraft.block_replication",UUID.randomUUID().toString());
+                if (!plugin.isAir(itemStacks.get(i)))
+                {
+                    inventory.setItem(ansItems.get(i),itemStacks.get(i));
+                }
+                else
+                {
+                    inventory.setItem(ansItems.get(i),EmptyAns);
+                }
             }
-            inventory.setItem(24,item.getItem());
         }
         else
         {
-            inventory.setItem(24,EmptyAns);
+            for (int i:ansItems)
+            {
+                inventory.setItem(i,EmptyAns);
+            }
         }
     }
 
@@ -417,22 +459,12 @@ public final class BluestarCraftManager
         final String name;
         final boolean shape;
         final boolean exact;
-        final boolean toBukkit;
-
-        public RecipeData(String name,boolean shape,boolean exact,boolean toBukkit)
-        {
-            this.name=name;
-            this.shape=shape;
-            this.exact=exact;
-            this.toBukkit=toBukkit;
-        }
 
         public RecipeData(String name,boolean shape,boolean exact)
         {
             this.name=name;
             this.shape=shape;
             this.exact=exact;
-            this.toBukkit=false;
         }
     }
 
