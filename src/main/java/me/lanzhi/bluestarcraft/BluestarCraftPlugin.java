@@ -15,6 +15,7 @@ import me.lanzhi.bluestarcraft.listeners.CraftTableListener;
 import me.lanzhi.bluestarcraft.listeners.RegisterListener;
 import me.lanzhi.bluestarcraft.managers.BluestarCraftManager;
 import me.lanzhi.bluestarcraft.managers.Metrics;
+import me.lanzhi.bluestarcraft.managers.checkUpdata;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public final class BluestarCraftPlugin extends JavaPlugin
     private YamlFile data;
     private YamlFile lang;
     private double version;
+    private BukkitTask task;
 
     @Override
     public void onEnable()
@@ -123,12 +126,14 @@ public final class BluestarCraftPlugin extends JavaPlugin
         }
         loadRecipes();
         new Metrics(this);
+        task=new checkUpdata(this).runTaskTimerAsynchronously(this,0,72000);
         info("BluestarCraft"+lang.getString("enable"));
     }
 
     @Override
     public void onDisable()
     {
+        task.cancel();
         for (Inventory inventory: bluestarCraftManager.getInventories())
         {
             for (HumanEntity entity: inventory.getViewers())
