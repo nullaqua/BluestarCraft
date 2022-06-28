@@ -44,6 +44,7 @@ public final class CraftGuiListener implements Listener
             }
             if (event.getSlot()==plugin.getBluestarCraftManager().Yes)
             {
+                event.setCancelled(true);
                 List<ItemStack>itemStacks=manager.make(event.getInventory(),event.isShiftClick());
                 if (itemStacks==null)
                 {
@@ -53,7 +54,6 @@ public final class CraftGuiListener implements Listener
                 {
                     manager.give(event.getWhoClicked(),itemStack);
                 }
-                event.setCancelled(true);
             }
         }
     }

@@ -181,9 +181,10 @@ public final class BluestarCraftPlugin extends JavaPlugin
             for (String key: shaped.getKeys(false))
             {
                 me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe recipe=new me.lanzhi.bluestarcraft.api.recipe.ShapedRecipe(
-                        key,new ArrayList<>(Collections.singletonList(new ItemStack(Material.matchMaterial(shaped.getString(key+".result")),
-                              shaped.getInt(key+".amount")))
-                ),shaped.getStringList(key+".shape").toArray(new String[0]));
+                        key,new ArrayList<>(Collections.singletonList(
+                        new ItemStack(Material.matchMaterial(shaped.getString(key+".result")),
+                                      shaped.getInt(key+".amount")
+                        ))),shaped.getStringList(key+".shape").toArray(new String[0]));
                 for (String s: shaped.getConfigurationSection(key+".ingredient").getKeys(false))
                 {
                     recipe.setIngredient(s.charAt(0),Material.matchMaterial(shaped.getString(key+".ingredient."+s)));
@@ -195,8 +196,9 @@ public final class BluestarCraftPlugin extends JavaPlugin
         {
             for (String key: shapeless.getKeys(false))
             {
-                ShapelessRecipe recipe=new ShapelessRecipe(key,new ArrayList<>(Collections.singletonList(new ItemStack(
-                        Material.matchMaterial(shapeless.getString(key+".result")),shapeless.getInt(key+".amount")))));
+                ShapelessRecipe recipe=new ShapelessRecipe(key,new ArrayList<>(Collections.singletonList(
+                        new ItemStack(Material.matchMaterial(shapeless.getString(key+".result")),
+                                      shapeless.getInt(key+".amount")))));
                 for (String s: shapeless.getConfigurationSection(key+".ingredient").getKeys(false))
                 {
                     recipe.addMaterial(Material.matchMaterial(s),shapeless.getInt(key+".ingredient."+s));
