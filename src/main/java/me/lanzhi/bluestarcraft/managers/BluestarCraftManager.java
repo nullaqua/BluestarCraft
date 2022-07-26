@@ -192,10 +192,6 @@ public final class BluestarCraftManager
     public void addRecipe(@NotNull Recipe recipe)
     {
         plugin.info("注册合成表: "+recipe.getName());
-        if (plugin.getVersion()>=15)
-        {
-            Bukkit.removeRecipe(new NamespacedKey(plugin,recipe.getName()));
-        }
         recipes.put(recipe.getName(),recipe);
     }
 

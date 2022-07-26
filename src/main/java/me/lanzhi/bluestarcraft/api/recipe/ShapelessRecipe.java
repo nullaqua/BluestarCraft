@@ -1,8 +1,8 @@
 package me.lanzhi.bluestarcraft.api.recipe;
 
-import me.lanzhi.bluestarapi.Api.config.AutoSerializeInterface;
-import me.lanzhi.bluestarapi.Api.config.SerializeAs;
-import me.lanzhi.bluestarapi.Api.config.SpecialSerialize;
+import me.lanzhi.bluestarapi.api.config.AutoSerializeInterface;
+import me.lanzhi.bluestarapi.api.config.SerializeAs;
+import me.lanzhi.bluestarapi.api.config.SpecialSerialize;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
