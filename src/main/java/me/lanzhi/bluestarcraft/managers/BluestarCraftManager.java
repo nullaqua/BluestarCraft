@@ -1,7 +1,7 @@
 package me.lanzhi.bluestarcraft.managers;
 
-import de.tr7zw.nbtapi.NBTEntity;
-import de.tr7zw.nbtapi.NBTItem;
+import me.lanzhi.api.nbt.NBTEntity;
+import me.lanzhi.api.nbt.NBTItem;
 import me.lanzhi.bluestarcraft.BluestarCraftPlugin;
 import me.lanzhi.bluestarcraft.api.recipe.CraftInventory;
 import me.lanzhi.bluestarcraft.api.recipe.Recipe;
