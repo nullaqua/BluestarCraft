@@ -1,8 +1,8 @@
 package me.lanzhi.bluestarcraft;
 
-import de.tr7zw.nbtapi.NBTItem;
-import me.lanzhi.bluestarapi.api.config.AutoSerialize;
-import me.lanzhi.bluestarapi.api.config.YamlFile;
+import me.lanzhi.api.nbt.*;
+import me.lanzhi.api.config.AutoSerialize;
+import me.lanzhi.api.config.YamlFile;
 import me.lanzhi.bluestarcraft.api.BluestarCraft;
 import me.lanzhi.bluestarcraft.api.recipe.Recipe;
 import me.lanzhi.bluestarcraft.api.recipe.ShapelessRecipe;

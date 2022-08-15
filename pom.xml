@@ -6,7 +6,7 @@
 
     <groupId>me.lanzhi</groupId>
     <artifactId>BluestarCraft</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
     <packaging>jar</packaging>
 
     <name>BluestarCraft</name>
@@ -82,19 +82,13 @@
         <dependency>
             <groupId>com.github.lanzhi6</groupId>
             <artifactId>BluestarAPI</artifactId>
-            <version>2.4.4</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.9.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
