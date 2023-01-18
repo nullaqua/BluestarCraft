@@ -8,11 +8,11 @@ shaped:
       - '  a'
     result: 'diamond_block'
     amount: 2
-    ingredient:
+    ingredients:
       a: 'diamond'
 shapeless:
   recipe2:
-    ingredient:
+    ingredients:
       diamond: 20
     result: 'diamond_block'
     amount: 5

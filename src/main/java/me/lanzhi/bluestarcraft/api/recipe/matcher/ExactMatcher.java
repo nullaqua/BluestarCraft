@@ -1,15 +1,19 @@
 package me.lanzhi.bluestarcraft.api.recipe.matcher;
 
-import me.lanzhi.api.config.AutoSerializeInterface;
-import me.lanzhi.api.config.SerializeAs;
+import me.lanzhi.bluestarapi.config.AutoSerialize;
+import me.lanzhi.bluestarapi.config.SerializeAs;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * 一个精确匹配器,即需要物品类型和nbt都相同
+ *
+ * @author Lanzhi
+ */
 @SerializeAs("BluestarCraft.ExactMatcher")
-public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
+public final class ExactMatcher implements DisplayableItemMatcher, AutoSerialize
 {
     private final ArrayList<ItemStack> itemStacks=new ArrayList<>();
 
@@ -17,6 +21,10 @@ public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
     {
     }
 
+    /**
+     * 匹配多个物品
+     * @param itemStacks 匹配列表
+     */
     public ExactMatcher(Collection<ItemStack> itemStacks)
     {
         for (ItemStack itemStack: itemStacks)
@@ -25,6 +33,10 @@ public final class ExactMatcher implements ItemMatcher, AutoSerializeInterface
         }
     }
 
+    /**
+     * 匹配多个物品
+     * @param itemStacks 匹配列表
+     */
     public ExactMatcher(ItemStack... itemStacks)
     {
         for (ItemStack itemStack: itemStacks)

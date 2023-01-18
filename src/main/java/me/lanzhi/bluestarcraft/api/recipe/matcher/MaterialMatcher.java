@@ -1,11 +1,10 @@
 package me.lanzhi.bluestarcraft.api.recipe.matcher;
 
-import me.lanzhi.api.config.AutoSerializeInterface;
-import me.lanzhi.api.config.SerializeAs;
-import me.lanzhi.api.config.SpecialSerialize;
+import me.lanzhi.bluestarapi.config.AutoSerialize;
+import me.lanzhi.bluestarapi.config.SerializeAs;
+import me.lanzhi.bluestarapi.config.SpecialSerialize;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,10 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 @SerializeAs("BluestarCraft.MaterialMatcher")
-public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterface
+public final class MaterialMatcher implements DisplayableItemMatcher, AutoSerialize
 {
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
-    private List<Material> materials;
+    private final List<Material> materials;
 
     public MaterialMatcher()
     {
@@ -28,7 +27,7 @@ public final class MaterialMatcher implements ItemMatcher, AutoSerializeInterfac
         this.materials=Arrays.asList(materials.clone());
     }
 
-    public MaterialMatcher(Collection<Material>materials)
+    public MaterialMatcher(Collection<Material> materials)
     {
         this.materials=new ArrayList<>(materials);
     }

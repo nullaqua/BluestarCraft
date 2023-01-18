@@ -9,13 +9,19 @@ commands:
       - bscraft
   opencraft:
     permission: BluestarCraft.opencraft
+  recipesbook:
+    permission: BluestarCraft.recipesbook
+    aliases:
+      - recipes
+      - recipebook
 permissions:
   BluestarCraft.*:
     children:
+      BluestarCraft.recipesbook:
+        default: true
       BluestarCraft.command:
         default: op
       BluestarCraft.opencraft:
         default: op
 depend:
-  - NBTAPI
   - BluestarAPI

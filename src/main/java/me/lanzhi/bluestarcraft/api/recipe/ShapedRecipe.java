@@ -1,25 +1,26 @@
 package me.lanzhi.bluestarcraft.api.recipe;
 
-import me.lanzhi.api.config.AutoSerializeInterface;
-import me.lanzhi.api.config.SerializeAs;
-import me.lanzhi.api.config.SpecialSerialize;
+import me.lanzhi.bluestarapi.config.AutoSerialize;
+import me.lanzhi.bluestarapi.config.SerializeAs;
+import me.lanzhi.bluestarapi.config.SpecialSerialize;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.ItemMatcher;
 import me.lanzhi.bluestarcraft.api.recipe.matcher.MaterialMatcher;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
 @SerializeAs("BluestarCraft.ShapedRecipe")
-public final class ShapedRecipe implements Recipe, AutoSerializeInterface
+public final class ShapedRecipe extends AbstractRecipe implements AutoSerialize
 {
     private final String name;
     @SpecialSerialize
     private final boolean save;
     private ItemStack result, result1, result2, result3, result4;
-    private List<String> lines;
+    private final List<String> lines;
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
-    private Map<Character, ItemMatcher> ingredient=new HashMap<>();
+    private Map<Character,ItemMatcher> ingredient=new HashMap<>();
 
     public ShapedRecipe()
     {
@@ -113,10 +114,10 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         setIngredient(' ',ItemMatcher.EMPTY_MATCHER);
     }
 
-    public static Map<String, ItemMatcher> serialize(Map<Character, ItemMatcher> map)
+    public static Map<String,ItemMatcher> serialize(Map<Character,ItemMatcher> map)
     {
-        Map<String, ItemMatcher> map1=new HashMap<>();
-        for (Map.Entry<Character, ItemMatcher> entry: map.entrySet())
+        Map<String,ItemMatcher> map1=new HashMap<>();
+        for (Map.Entry<Character,ItemMatcher> entry: map.entrySet())
         {
             map1.put(entry.getKey()+"",entry.getValue());
         }
@@ -124,10 +125,10 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         return map1;
     }
 
-    public static Map<Character, ItemMatcher> deserialize(Map<String, ItemMatcher> map)
+    public static Map<Character,ItemMatcher> deserialize(Map<String,ItemMatcher> map)
     {
-        Map<Character, ItemMatcher> map1=new HashMap<>();
-        for (Map.Entry<String, ItemMatcher> entry: map.entrySet())
+        Map<Character,ItemMatcher> map1=new HashMap<>();
+        for (Map.Entry<String,ItemMatcher> entry: map.entrySet())
         {
             map1.put(entry.getKey().charAt(0),entry.getValue());
         }
@@ -135,14 +136,14 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         return map1;
     }
 
-    public void setIngredient(char s,Material material)
-    {
-        setIngredient(s,new MaterialMatcher(material));
-    }
-
     public void setIngredient(char s,ItemMatcher itemMatcher)
     {
         ingredient.put(s,itemMatcher);
+    }
+
+    public void setIngredient(char s,Material material)
+    {
+        setIngredient(s,new MaterialMatcher(material));
     }
 
     @Override
@@ -220,40 +221,26 @@ public final class ShapedRecipe implements Recipe, AutoSerializeInterface
         return new ArrayList<>(Arrays.asList(result,result1,result2,result3,result4));
     }
 
-    /*
-    @Override
-    public List<ItemStack> getItems()
-    {
-        List<ItemStack> list=new ArrayList<>();
-        for (Map.Entry<Character, ItemMatcher> entry: ingredient.entrySet())
-        {
-            if (entry.getKey()!=' ')
-            {
-                list.add(entry.getValue().get());
-            }
-        }
-        return list;
-    }*/
-
     @Override
     public ShapedRecipe clone()
     {
-        ShapedRecipe clone;
-        try
+        var clone=new ShapedRecipe(name,getResult(),save,lines.toArray(new String[0]));
+        clone.ingredient=new HashMap<>(ingredient);
+        return clone;
+    }
+
+    @Override
+    public List<DisplayInfo> displays(Player player)
+    {
+        List<ItemStack> items=new ArrayList<>();
+        for (int i=0;i<5;i++)
         {
-            clone=(ShapedRecipe) super.clone();
-            clone.result=result;
-            clone.result1=result1;
-            clone.result2=result2;
-            clone.result3=result3;
-            clone.result4=result4;
-            clone.lines=new ArrayList<>(this.lines);
-            clone.ingredient=new HashMap<>(this.ingredient);
-            return clone;
+            for (int j=0;j<5;j++)
+            {
+                items.add(ingredient.get(this.lines.get(i).toCharArray()[j]).get());
+            }
         }
-        catch (CloneNotSupportedException e)
-        {
-            return null;
-        }
+        DisplayInfo displayInfo=new DisplayInfo(new CraftInventory(items),getResult());
+        return Collections.singletonList(displayInfo);
     }
 }

@@ -6,13 +6,13 @@
 
     <groupId>me.lanzhi</groupId>
     <artifactId>BluestarCraft</artifactId>
-    <version>1.4.4</version>
+    <version>1.5.0</version>
     <packaging>jar</packaging>
 
     <name>BluestarCraft</name>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>10</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -62,8 +62,8 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>mvn-repo</id>
+            <url>https://raw.githubusercontent.com/lanzhi6/maven-repository/main</url>
         </repository>
         <repository>
             <id>codemc-repo</id>
@@ -80,15 +80,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.lanzhi6</groupId>
-            <artifactId>BluestarAPI</artifactId>
-            <version>3.0.0</version>
+            <groupId>me.lanzhi</groupId>
+            <artifactId>BluestarAPI-plugin</artifactId>
+            <version>3.3.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>23.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -14,7 +14,38 @@ import java.util.List;
  */
 public final class CraftInventory implements Cloneable
 {
-    private final static List<Integer> craftItem=Arrays.asList(0,1,2,3,4,9,10,11,12,13,18,19,20,21,22,27,28,29,30,31,36,37,38,39,40);
+    private final static List<Integer> craftItem;
+
+    static
+    {
+        //0-4,9-13,18-22,27-31,36-40
+        craftItem=new ArrayList<>();
+        for (int i=0;i<5;i++)
+        {
+            for (int j=0;j<5;j++)
+            {
+                craftItem.add(i*9+j);
+            }
+        }
+    }
+
+    public CraftInventory(ItemStack... itemStacks)
+    {
+        this.itemStacks=new ArrayList<>();
+        this.itemStacks.addAll(Arrays.asList(itemStacks));
+        if (this.itemStacks.size()<25)
+        {
+            for (int i=this.itemStacks.size();i<25;i++)
+            {
+                this.itemStacks.add(new ItemStack(Material.AIR));
+            }
+        }
+        if (this.itemStacks.size()>25)
+        {
+            this.itemStacks=this.itemStacks.subList(0,25);
+        }
+    }
+
     private List<ItemStack> itemStacks=new ArrayList<>();
 
     public CraftInventory(Inventory inventory)
@@ -35,6 +66,28 @@ public final class CraftInventory implements Cloneable
         }
     }
 
+    public CraftInventory(List<ItemStack> itemStacks)
+    {
+        this.itemStacks=new ArrayList<>();
+        this.itemStacks.addAll(itemStacks);
+        if (this.itemStacks.size()<25)
+        {
+            for (int i=this.itemStacks.size();i<25;i++)
+            {
+                this.itemStacks.add(new ItemStack(Material.AIR));
+            }
+        }
+        if (this.itemStacks.size()>25)
+        {
+            this.itemStacks=this.itemStacks.subList(0,25);
+        }
+    }
+
+    public static List<Integer> craftItem()
+    {
+        return craftItem;
+    }
+
     @NotNull
     public ItemStack getItem(int index)
     {
@@ -49,8 +102,8 @@ public final class CraftInventory implements Cloneable
 
     public ItemStack[] getItems()
     {
-        List<ItemStack>list=new ArrayList<>();
-        for (ItemStack itemStack:itemStacks)
+        List<ItemStack> list=new ArrayList<>();
+        for (ItemStack itemStack: itemStacks)
         {
             list.add(itemStack.clone());
         }
@@ -60,20 +113,7 @@ public final class CraftInventory implements Cloneable
     @Override
     public CraftInventory clone()
     {
-        CraftInventory clone;
-        try
-        {
-            clone=(CraftInventory) super.clone();
-            clone.itemStacks=new ArrayList<>();
-            for (ItemStack itemStack: itemStacks)
-            {
-                clone.itemStacks.add(itemStack.clone());
-            }
-        }
-        catch (CloneNotSupportedException e)
-        {
-            return null;
-        }
-        return clone;
+        return new CraftInventory(itemStacks.toArray(new ItemStack[0]));
     }
+
 }

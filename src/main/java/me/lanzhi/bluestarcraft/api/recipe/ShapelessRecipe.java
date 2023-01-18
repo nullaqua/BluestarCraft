@@ -1,21 +1,22 @@
 package me.lanzhi.bluestarcraft.api.recipe;
 
-import me.lanzhi.api.config.AutoSerializeInterface;
-import me.lanzhi.api.config.SerializeAs;
-import me.lanzhi.api.config.SpecialSerialize;
+import me.lanzhi.bluestarapi.config.AutoSerialize;
+import me.lanzhi.bluestarapi.config.SerializeAs;
+import me.lanzhi.bluestarapi.config.SpecialSerialize;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
 @SerializeAs("BluestarCraft.ShapelessRecipe")
-public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
+public final class ShapelessRecipe extends AbstractRecipe implements AutoSerialize
 {
     private final String name;
     @SpecialSerialize
     private final boolean save;
     @SpecialSerialize(serialize="serialize", deserialize="deserialize")
-    private Map<Material, Integer> map=new HashMap<>();
+    private Map<Material,Integer> map=new HashMap<>();
     private ItemStack result, result1, result2, result3, result4;
 
     public ShapelessRecipe()
@@ -23,6 +24,11 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         result=null;
         name=null;
         save=true;
+    }
+
+    public ShapelessRecipe(String name,List<ItemStack> result)
+    {
+        this(name,result,false);
     }
 
     public ShapelessRecipe(String name,List<ItemStack> result,boolean needSave)
@@ -57,25 +63,20 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         }
     }
 
-    public ShapelessRecipe(String name,List<ItemStack> result)
+    public static Map<String,Integer> serialize(Map<Material,Integer> map)
     {
-        this(name,result,false);
-    }
-
-    public static Map<String, Integer> serialize(Map<Material, Integer> map)
-    {
-        Map<String, Integer> map1=new HashMap<>();
-        for (Map.Entry<Material, Integer> entry: map.entrySet())
+        Map<String,Integer> map1=new HashMap<>();
+        for (Map.Entry<Material,Integer> entry: map.entrySet())
         {
             map1.put(entry.getKey().name(),entry.getValue());
         }
         return map1;
     }
 
-    public static Map<Material, Integer> deserialize(Map<String, Integer> map)
+    public static Map<Material,Integer> deserialize(Map<String,Integer> map)
     {
-        Map<Material, Integer> map1=new HashMap<>();
-        for (Map.Entry<String, Integer> entry: map.entrySet())
+        Map<Material,Integer> map1=new HashMap<>();
+        for (Map.Entry<String,Integer> entry: map.entrySet())
         {
             map1.put(Material.getMaterial(entry.getKey()),entry.getValue());
         }
@@ -99,6 +100,11 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         map.put(material,cnt);
     }
 
+    public void removeMaterial(Material material,int cnt)
+    {
+        addMaterial(material,-cnt);
+    }
+
     public void addMaterial(Material material,int cnt)
     {
         Integer x=map.get(material);
@@ -113,15 +119,10 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
         }
     }
 
-    public void removeMaterial(Material material,int cnt)
-    {
-        addMaterial(material,-cnt);
-    }
-
     @Override
     public boolean match(CraftInventory inventory)
     {
-        Map<Material, Integer> map1=new HashMap<>();
+        Map<Material,Integer> map1=new HashMap<>();
         for (ItemStack itemStack: inventory.getItems())
         {
             if (itemStack==null||itemStack.getType()==Material.AIR)
@@ -162,21 +163,23 @@ public final class ShapelessRecipe implements Recipe, AutoSerializeInterface
     @Override
     public ShapelessRecipe clone()
     {
-        ShapelessRecipe clone;
-        try
+        var clone=new ShapelessRecipe(name,getResult(),save);
+        clone.map=new HashMap<>(map);
+        return clone;
+    }
+
+    @Override
+    public List<DisplayInfo> displays(Player player)
+    {
+        List<ItemStack> items=new ArrayList<>();
+        for (Map.Entry<Material,Integer> entry: map.entrySet())
         {
-            clone=(ShapelessRecipe) super.clone();
-            clone.result=result;
-            clone.result1=result1;
-            clone.result2=result2;
-            clone.result3=result3;
-            clone.result4=result4;
-            clone.map=new HashMap<>(map);
-            return clone;
+            ItemStack itemStack=new ItemStack(entry.getKey());
+            for (int i=1;i<=entry.getValue();i++)
+            {
+                items.add(itemStack);
+            }
         }
-        catch (CloneNotSupportedException e)
-        {
-            return null;
-        }
+        return Collections.singletonList(new DisplayInfo(new CraftInventory(items),getResult()));
     }
 }

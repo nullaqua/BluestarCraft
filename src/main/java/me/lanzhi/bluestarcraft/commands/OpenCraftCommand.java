@@ -8,15 +8,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class opencraftCommand implements CommandExecutor
+public class OpenCraftCommand implements CommandExecutor
 {
-    private BluestarCraftPlugin plugin;
-    public opencraftCommand(BluestarCraftPlugin plugin)
+    private final BluestarCraftPlugin plugin;
+
+    public OpenCraftCommand(BluestarCraftPlugin plugin)
     {
         this.plugin=plugin;
     }
+
     @Override
-    public boolean onCommand(@NotNull CommandSender sender,@NotNull Command command,@NotNull String label,@NotNull String[] args)
+    public boolean onCommand(@NotNull CommandSender sender,@NotNull Command command,@NotNull String label,
+                             @NotNull String[] args)
     {
         if (!(sender instanceof Player))
         {
